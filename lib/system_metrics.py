@@ -55,12 +55,6 @@ open_file_descriptors_metric = Gauge('open_file_descriptors', 'Open File Descrip
 max_file_descriptors_metric = Gauge('max_file_descriptors', 'Max File Descriptors')
 index_docs_metric = Gauge('index_docs', 'Index components - Docs')
 sonarlint_client_metric = Gauge('sonarlint_client', 'SonarLint Connected Clients')
-total_of_user_metric = Gauge('total_of_user', 'Total of user')
-total_of_project_metric = Gauge('total_of_project', 'Total of project')
-total_line_of_code_metric = Gauge('total_line_of_code', 'Total line of code')
-total_of_plugins_metric = Gauge('total_of_plugins', 'Total of plugins')
-project_count_by_language_metric = Gauge('project_count_by_language', 'Project count by language', ['language'])
-ncloc_count_by_language_metric = Gauge('ncloc_count_by_language', 'Line of code count by language', ['language'])
 
 
 def system_metric(sonarqube_server, sonarqube_token):
@@ -238,25 +232,3 @@ def system_metric(sonarqube_server, sonarqube_token):
   server_push_connections = get_json('Server Push Connections', data)
   sonarlint_client = get_json('SonarLint Connected Clients', server_push_connections)
   sonarlint_client_metric.set(sonarlint_client)
-
-# Statistics
-  statistics = get_json('Statistics', data)
-  total_of_user = get_json('userCount', statistics)
-  total_of_user_metric.set(total_of_user)
-
-  total_of_project = get_json('projectCount', statistics)
-  total_of_project_metric.set(total_of_project)
-
-  total_line_of_code = get_json('ncloc', statistics)
-  total_line_of_code_metric.set(total_line_of_code)
-
-  total_of_plugins = get_json('plugins', statistics)
-  total_of_plugins_metric.set(len(total_of_plugins))
-
-  project_count_by_language = get_json('projectCountByLanguage', statistics)
-  for c in project_count_by_language:
-    project_count_by_language_metric.labels(language=c['language']).set(c['count'])
-
-  ncloc_count_by_language = get_json('nclocByLanguage', statistics)
-  for c in ncloc_count_by_language:
-    ncloc_count_by_language_metric.labels(language=c['language']).set(c['ncloc'])
